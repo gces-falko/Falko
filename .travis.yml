@@ -22,7 +22,7 @@ env:
   global:
     - CC_TEST_REPORTER_ID=f9a7cc51d41f847d9b5c91f469606222755355ec9ea001c6bd7a16d20f45941f
   matrix:
-    - TASK="docker exec -it falko-front yarn unit & wait-on http://localhost:8080"
+    - TASK="docker exec -it falko-front yarn unit"
     - TASK="docker exec -it falko-front npm cypress run"
 
 script:
