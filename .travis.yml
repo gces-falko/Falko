@@ -10,7 +10,7 @@ node_js:
 
 before_script:
   - npm install coveralls
-  - docker network create falko20172backend_default
+  - docker network create falko-backend
   - docker-compose up -d
 
 env:
