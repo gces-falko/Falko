@@ -8,6 +8,9 @@ language: node_js
 node_js:
   - 8.6.0
 
+install:
+  - yarn
+
 before_script:
   - npm install coveralls
   - docker network create falko-backend
