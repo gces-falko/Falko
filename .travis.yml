@@ -19,7 +19,7 @@ before_script:
   - docker-compose up -d
 
 script:
-  - docker exec -it falko-front yarn test
+  - docker exec -it falko-front yarn run test
   - docker exec -it falko-front npx cypress run
 
 after_script:
