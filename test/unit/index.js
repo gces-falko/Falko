@@ -6,5 +6,5 @@ Vue.config.productionTip = false
 const testsContext = require.context('./specs', true, /\.spec$/)
 testsContext.keys().forEach(testsContext)
 
-const srcContext = require.context('../../src/components', true, /\.vue$/)		
+const srcContext = require.context('../../src/components', false, /\.vue$/)		
 srcContext.keys().forEach(srcContext)
