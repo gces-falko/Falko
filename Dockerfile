@@ -21,6 +21,6 @@ RUN rm -rf ./build
 RUN rm -rf ./test
 RUN rm -rf ./src
 
-EXPOSE 80
+EXPOSE 80 9876
 
 ENTRYPOINT [".scripts/sh/start-homolog.sh"]
