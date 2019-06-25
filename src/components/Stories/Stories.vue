@@ -9,7 +9,7 @@
             <h4 style="color:#86B1B1; font-size:24px;">{{issues.length}}</h4>
           </div>
           <draggable v-model="issues" v-bind:options="{group:'issues'}"  @change="onUpdateBacklog($event)" class="dragArea">
-            <div v-for="issue in issues">
+            <div v-for="issue in issues" :key="issue">
               <div align="center">
               <div class="card kanbanCard">
                 <div class="card-body">

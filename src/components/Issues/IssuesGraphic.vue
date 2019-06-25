@@ -50,7 +50,7 @@
             <h4>Issues opened this month</h4>
             <h6>Projected monthly trend compared to last month</h6>
             <div class="labelIssues">
-              <img v-if="openedPercentageIcon==true"src="../../assets/up-porcentage-arrow.png" class="img-fluid align-self-center arrow-image"/>
+              <img v-if="openedPercentageIcon==true" src="../../assets/up-porcentage-arrow.png" class="img-fluid align-self-center arrow-image"/>
               <img v-if="openedPercentageIcon==false" src="../../assets/down-porcentage-arrow.png" class="img-fluid align-self-center arrow-image"/>
               {{compareOpenedPercentage}}%
             </div>

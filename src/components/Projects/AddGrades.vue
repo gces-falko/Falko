@@ -35,7 +35,7 @@
                 <div v-model="velocity" class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                   <a class="dropdown-item items-click" v-on:click="setVelocityValue(0)">0</a>
                   <a class="dropdown-item items-click" v-on:click="setVelocityValue(1)">1</a>
-                  <a class="dropdown-item items-click"v-on:click="setVelocityValue(2)">2</a>
+                  <a class="dropdown-item items-click" v-on:click="setVelocityValue(2)">2</a>
                 </div>
               </div>
             </div>
@@ -47,7 +47,7 @@
                 <div v-model="debt" class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                   <a class="dropdown-item items-click" v-on:click="setDebtValue(0)">0</a>
                   <a class="dropdown-item items-click" v-on:click="setDebtValue(1)">1</a>
-                  <a class="dropdown-item items-click"v-on:click="setDebtValue(2)">2</a>
+                  <a class="dropdown-item items-click" v-on:click="setDebtValue(2)">2</a>
                 </div>
               </div>
             </div>

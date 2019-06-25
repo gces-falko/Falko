@@ -32,7 +32,7 @@
                   <input type="text" v-model="search" placeholder="search...">
                 </div>
               <div class="col" v-if="search != ''">
-                <div class="row" v-for="contributor in filteredContribs">
+                <div class="row" v-for="contributor in filteredContribs" :key="contributor">
                 <label class="custom-control custom-checkbox">
                   <input type="checkbox" class="custom-control-input" v-bind:value="contributor" v-model="selectedContribs">
                     <span class="custom-control-indicator"></span>
