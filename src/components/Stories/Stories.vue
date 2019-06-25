@@ -214,6 +214,133 @@ export default {
     }),
   },
   methods: {
+
+    onUpdateBacklog(evt) {
+      if(evt.added){
+        const storyId = evt.added.element.id;
+        this.deleteStory(storyId).then(() => this.refreshIssues());
+      }
+    },
+
+
+    onUpdateToDo(evt) {
+      if(evt.added){
+        if(this.isStory(evt)) {
+          const storyId = evt.added.element.id;
+          this.updateStoryPipeline(storyId, 'To Do').then(() => this.refreshToDo());
+        } else {
+          const newStory = this.createStoryObject(evt, 'To Do');
+          this.createStory(newStory).then(() => this.refreshToDo());
+        }
+      }
+    },
+
+    onUpdateDoing(evt) {
+      if(evt.added){
+        if(this.isStory(evt)) {
+          const storyId = evt.added.element.id;
+          this.updateStoryPipeline(storyId, 'Doing').then(() => this.refreshDoing());
+        } else {
+          const newStory = this.createStoryObject(evt, 'Doing');
+          this.createStory(newStory).then(() => this.refreshDoing());
+        }
+      }
+    },
+
+
+
+    onUpdateDone(evt) {
+      if(evt.added) {
+        if(this.isStory(evt)) {
+          const storyId = evt.added.element.id;
+          this.updateStoryPipeline(storyId, 'Done').then(() => this.refreshDone());
+        } else {
+          const newStory = this.createStoryObject(evt, 'Done');
+          this.createStory(newStory).then(() => this.refreshDone());
+        }
+        const issueNumber = evt.added.element.id ? evt.added.element.issue_number : evt.added.element.number;
+        this.closeIssue(issueNumber);
+      } else{
+        const issueNumber = evt.removed.element.issue_number;
+        this.reopenIssue(issueNumber);
+      }
+    },
+
+    updateStoryPipeline(storyId, pipeline) {
+
+      const headers = { Authorization: this.token };
+
+      return HTTP.patch(`/stories/${storyId}`, { pipeline: pipeline }, { headers })
+        .then((response) => console.log(response.code))
+    },
+
+    createStoryObject(evt,pipeline) {
+      const story = {
+            name: evt.added.element.name,
+            description: evt.added.element.body,
+            issue_number:evt.added.element.number,
+            issue_id:evt.added.element.issue_id,
+            story_points: "0",
+            pipeline:pipeline,
+            initial_date:new Date().toString(),
+      }  
+
+      return story;
+    },
+
+    createStory(story) {
+      const headers = { Authorization: this.token }
+
+      return HTTP.post(`sprints/${this.$route.params.id}/stories`, story, { headers })
+        .then((response) => console.log(response.code));
+    },
+
+    deleteStory(storyId) {
+      const headers = { Authorization: this.token }
+
+      return HTTP.delete(`stories/${storyId}`, { headers })
+        .then((response) => console.log(response.code));
+    },
+
+    reopenIssue(issueNumber) {
+        const headers = { Authorization: this.token };
+
+        HTTP.post(`/projects/${this.projectId}/reopen_issue`, { issue: { number: issueNumber } }, { headers })
+        .then(() => {
+          this.closed = false;
+        })
+        .catch((e) => {
+          this.errors.push(e);
+        });
+    },
+
+    closeIssue(issueNumber) {
+        const headers = { Authorization: this.token };
+
+        const config = { data: { issue: { number: issueNumber } }, headers};
+
+        HTTP.delete(`/projects/${this.projectId}/issues`, config)
+          .then(() => {
+            this.closed = true;
+          })
+          .catch((e) => {
+            this.errors.push(e);
+          });
+    },
+
+
+    getProjects() {
+      const headers = { Authorization: this.token };
+
+      HTTP.get(`users/${this.userId}/projects`, { headers })
+      .then((response) => {
+        this.projects = response.data;
+      })
+      .catch((e) => {
+        this.errors.push(e);
+      });
+    },
+
     getIssues() {
       const headers = { Authorization: this.token };
 
@@ -249,6 +376,7 @@ export default {
         });
     },
 
+
     getDone() {
       const headers = { Authorization: this.token };
 
@@ -261,118 +389,8 @@ export default {
         });
     },
 
-    onUpdateBacklog(evt) {
-      const headers = { Authorization: this.token }
-      if(evt.added){
-        HTTP.delete(`stories/${evt.added.element.id}`, { headers })
-        .then((response) => console.log(response.code))
-        .then(() => this.refreshIssues())
-      }
-    },
-
-    onUpdateToDo(evt) {
-      const headers = { Authorization: this.token };
-
-      if(evt.added){
-        if(evt.added.element.id) {
-          HTTP.patch(`/stories/${evt.added.element.id}`, { pipeline:"To Do" }, { headers })
-            .then((response) => console.log(response.code))
-              .then(() => this.refreshToDo());
-        } else {
-          HTTP.post(`sprints/${this.$route.params.id}/stories`, { 
-            name: evt.added.element.name,
-            description: evt.added.element.body,
-            issue_number:evt.added.element.number,
-            issue_id:evt.added.element.issue_id,
-            story_points: "0",
-            pipeline:"To Do",
-            initial_date:new Date().toString(),
-          }, { headers })
-            .then((response) => console.log(response.code))
-              .then(() => this.refreshToDo());
-        }
-      }
-    },
-
-    onUpdateDoing(evt) {
-      const headers = { Authorization: this.token };
-
-      if(evt.added){
-        if(evt.added.element.id) {
-          HTTP.patch(`/stories/${evt.added.element.id}`, { pipeline:"Doing" }, { headers })
-          .then((response) => console.log(response.code))
-            .then(() => this.refreshDoing());
-        } else {
-          HTTP.post(`sprints/${this.$route.params.id}/stories`, { 
-            name: evt.added.element.name,
-            description: evt.added.element.body,
-            issue_number:evt.added.element.number,
-            issue_id:evt.added.element.issue_id,
-            story_points: "0",
-            pipeline:"Doing",
-            initial_date:new Date().toString(),
-          }, { headers })
-            .then((response) => console.log(response.code))
-              .then(() => this.refreshDoing());
-        }
-      }
-    },
-
-    onUpdateDone(evt) {
-      const headers = { Authorization: this.token };
-      if(evt.added){
-        if(evt.added.element.id) {
-          HTTP.patch(`/stories/${evt.added.element.id}`, { pipeline:"Done" }, { headers })
-            .then((response) => console.log(response.code))
-            .then(()=> this.refreshDone());
-        } else {
-          HTTP.post(`sprints/${this.$route.params.id}/stories`, { 
-            name: evt.added.element.name,
-            description: evt.added.element.body,
-            issue_number:evt.added.element.number,
-            issue_id:evt.added.element.issue_id,
-            story_points: "0",
-            pipeline:"Done",
-            initial_date:new Date().toString(),
-          }, { headers })
-            .then((response) => console.log(response.code))
-            .then(() => this.refreshDone());
-        }
-
-
-        const issue_number = evt.added.element.id ? evt.added.element.issue_number : evt.added.element.number;
-
-        const config = { data: { issue: { number: issue_number } }, headers};
-
-        HTTP.delete(`/projects/${this.projectId}/issues`, config)
-          .then(() => {
-            this.closed = true;
-          })
-          .catch((e) => {
-            this.errors.push(e);
-          });
-      }
-      else{
-        HTTP.post(`/projects/${this.projectId}/reopen_issue`, { issue: { number: evt.removed.element.issue_number } }, { headers })
-        .then(() => {
-          this.closed = false;
-        })
-        .catch((e) => {
-          this.errors.push(e);
-        });
-      }
-    },
-
-    getProjects() {
-      const headers = { Authorization: this.token };
-
-      HTTP.get(`users/${this.userId}/projects`, { headers })
-      .then((response) => {
-        this.projects = response.data;
-      })
-      .catch((e) => {
-        this.errors.push(e);
-      });
+    isStory(evt) { 
+      return evt.added.element.id;
     },
 
     refreshToDo() {
