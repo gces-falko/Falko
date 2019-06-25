@@ -55,14 +55,14 @@
 <script>
 import { HTTP } from '../../http-common.js';
 import { mapState } from 'vuex';
+import { issueMixin } from '../../mixins/issueMixin.js';
 
 export default {
+  mixins: [issueMixin],
   props: ["selected_issue"],
 
   data () {
     return {
-      name: "",
-      body: "",
       number: "",
       contributors: [],
       selectedContribs: [],

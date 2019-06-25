@@ -41,14 +41,11 @@
 import { EventBus } from '../../event-bus.js';
 import { HTTP } from '../../http-common.js';
 import { mapState } from 'vuex';
+import { issueMixin } from '../../mixins/issueMixin.js';
 
 export default {
-  data () {
-    return {
-      name: '',
-      body : ''
-    }
-	},
+
+  	mixins: [issueMixin],
 
 	computed: {
     ...mapState({
