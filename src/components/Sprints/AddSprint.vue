@@ -55,18 +55,11 @@
 import { mapState } from 'vuex';
 import { EventBus } from '../../event-bus';
 import { HTTP } from '../../http-common';
+import { sprintMixin } from '../../mixins/sprintMixin';
 
 export default {
   name: 'addSprintBody',
-
-  data() {
-    return {
-      name: '',
-      description: '',
-      sprintInitialDate: '',
-      sprintFinalDate: '',
-    };
-  },
+  mixins: [sprintMixin],
 
   computed: {
     ...mapState({

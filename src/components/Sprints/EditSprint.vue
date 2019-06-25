@@ -52,17 +52,12 @@
 <script>
 import { mapState } from 'vuex';
 import { HTTP } from '../../http-common';
+import { sprintMixin } from '../../mixins/sprintMixin';
 
 export default{
   name: 'editSprintBody',
-  data() {
-    return {
-      name: '',
-      description: '',
-      sprintInitialDate: '',
-      sprintFinalDate: '',
-    };
-  },
+  mixins: [sprintMixin],
+
   computed: {
     ...mapState({
       token: state => state.auth.token,
