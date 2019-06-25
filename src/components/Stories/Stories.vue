@@ -1,198 +1,285 @@
 <template>
-
   <div>
     <table>
       <div class="row" id="rowKanban">
         <div class="col kanban-col" style="padding: 0;">
           <div class="row" id="title">
-            <h4>Sprint Backlog&nbsp; &nbsp; </h4>
-            <h4 style="color:#86B1B1; font-size:24px;">{{issues.length}}</h4>
+            <h4>Sprint Backlog&nbsp; &nbsp;</h4>
+            <h4 style="color:#86B1B1; font-size:24px;">{{ issues.length }}</h4>
           </div>
-          <draggable v-model="issues" v-bind:options="{group:'issues'}"  @change="onUpdateBacklog($event)" class="dragArea">
+          <draggable
+            v-model="issues"
+            v-bind:options="{ group: 'issues' }"
+            @change="onUpdateBacklog($event)"
+            class="dragArea"
+          >
             <div v-for="issue in issues">
               <div align="center">
-              <div class="card kanbanCard">
-                <div class="card-body">
-                  <div class="row justify-content-around">
-                    <div class="col-md-4" align="center">
-                      <a target="_blank" v-bind:href="`https://github.com/${githubSlug}/issues/${issue.number}`">
-                        #{{issue.number}}
-                      </a>
+                <div class="card kanbanCard">
+                  <div class="card-body">
+                    <div class="row justify-content-around">
+                      <div class="col-md-4" align="center">
+                        <a
+                          target="_blank"
+                          v-bind:href="
+                            `https://github.com/${githubSlug}/issues/${
+                              issue.number
+                            }`
+                          "
+                        >
+                          #{{ issue.number }}
+                        </a>
+                      </div>
+                      <div
+                        class="col-md-8 float-left text-truncate bold"
+                        align="end"
+                      >
+                        {{ issue.name }}
+                      </div>
                     </div>
-                    <div class="col-md-8 float-left text-truncate bold" align="end">{{issue.name}}</div>
-                  </div>
-                  <div class="row">
-                    <div class="col">
-                      <p align="center" class="story-description text-muted">{{issue.body}}</p>
+                    <div class="row">
+                      <div class="col">
+                        <p align="center" class="story-description text-muted">
+                          {{ issue.body }}
+                        </p>
+                      </div>
                     </div>
-                  </div>
-                  <div class="row">
-                    <div class="col-md-4" align="start">
-                    </div>
-                    <div class="col-md-8" id="assignees" align="end">
-                      <assignees :issue-number="issue.number"></assignees>
+                    <div class="row">
+                      <div class="col-md-4" align="start"></div>
+                      <div class="col-md-8" id="assignees" align="end">
+                        <assignees :issue-number="issue.number"></assignees>
+                      </div>
                     </div>
                   </div>
                 </div>
+                <br />
               </div>
-              <br>
-            </div>
             </div>
           </draggable>
         </div>
-      <div class="col kanban-col">
-        <div class="row" id="title">
-          <h4>To Do&nbsp; &nbsp; </h4>
-          <h4 style="color:#86B1B1; font-size:24px;">{{stories.length}}</h4>
-        </div>
-        <draggable v-model="stories" v-bind:options="{group:'issues'}" @change="onUpdateToDo($event)" class="dragArea">
-          <div v-for="story in stories">
-            <div align="center">
-              <div class="card kanbanCard">
-                <div class="card-body">
-                  <div class="row justify-content-around">
-                    <div class="col-md-4" align="center">
-                      <a target="_blank" v-bind:href="`https://github.com/${githubSlug}/issues/${story.issue_number}`">
-                        #{{story.issue_number}}
-                      </a>
+        <div class="col kanban-col">
+          <div class="row" id="title">
+            <h4>To Do&nbsp; &nbsp;</h4>
+            <h4 style="color:#86B1B1; font-size:24px;">{{ stories.length }}</h4>
+          </div>
+          <draggable
+            v-model="stories"
+            v-bind:options="{ group: 'issues' }"
+            @change="onUpdateToDo($event)"
+            class="dragArea"
+          >
+            <div v-for="story in stories">
+              <div align="center">
+                <div class="card kanbanCard">
+                  <div class="card-body">
+                    <div class="row justify-content-around">
+                      <div class="col-md-4" align="center">
+                        <a
+                          target="_blank"
+                          v-bind:href="
+                            `https://github.com/${githubSlug}/issues/${
+                              story.issue_number
+                            }`
+                          "
+                        >
+                          #{{ story.issue_number }}
+                        </a>
+                      </div>
+                      <div
+                        class="col-md-8 float-left text-truncate bold"
+                        align="end"
+                      >
+                        {{ story.name }}
+                      </div>
                     </div>
-                    <div class="col-md-8 float-left text-truncate bold" align="end">{{story.name}}</div>
-                  </div>
-                  <div class="row">
-                    <div class="col">
-                      <p align="center" class="story-description text-muted">{{story.description}}</p>
+                    <div class="row">
+                      <div class="col">
+                        <p align="center" class="story-description text-muted">
+                          {{ story.description }}
+                        </p>
+                      </div>
                     </div>
-                  </div>
-                  <div class="row">
-                    <div class="col-md-4" align="start">
-                      <span class="badge badge-primary">
-                        <score-points 
-                            @update="refreshToDo" 
-                            :story-id="story.id" 
-                            :story-points="story.story_points"></score-points>
-                      </span>
-                    </div>
-                    <div class="col-md-8" id="assignees" align="end">
-                      <assignees :issue-number="story.issue_number"></assignees>
+                    <div class="row">
+                      <div class="col-md-4" align="start">
+                        <span class="badge badge-primary">
+                          <score-points
+                            @update="refreshToDo"
+                            :story-id="story.id"
+                            :story-points="story.story_points"
+                          ></score-points>
+                        </span>
+                      </div>
+                      <div class="col-md-8" id="assignees" align="end">
+                        <assignees
+                          :issue-number="story.issue_number"
+                        ></assignees>
+                      </div>
                     </div>
                   </div>
                 </div>
+                <br />
               </div>
-              <br>
             </div>
+          </draggable>
+        </div>
+        <div class="col kanban-col">
+          <div class="row" id="title">
+            <h4>Doing&nbsp; &nbsp;</h4>
+            <h4 style="color:#86B1B1; font-size:24px;">
+              {{ doingStories.length }}
+            </h4>
           </div>
-        </draggable>
-        </div>
-      <div class="col kanban-col">
-        <div class="row" id="title">
-          <h4>Doing&nbsp; &nbsp; </h4>
-          <h4 style="color:#86B1B1; font-size:24px;">{{doingStories.length}}</h4>
-        </div>
-        <draggable v-model="doingStories" v-bind:options="{group:'issues'}" @change="onUpdateDoing($event)" class="dragArea">
-          <div v-for="story in doingStories">
-            <div align="center">
-              <div class="card kanbanCard">
-                <div class="card-body">
-                  <div class="row justify-content-around">
-                    <div class="col-md-4" align="center">
-                      <a target="_blank" v-bind:href="`https://github.com/${githubSlug}/issues/${story.issue_number}`">
-                        #{{story.issue_number}}
-                      </a>
+          <draggable
+            v-model="doingStories"
+            v-bind:options="{ group: 'issues' }"
+            @change="onUpdateDoing($event)"
+            class="dragArea"
+          >
+            <div v-for="story in doingStories">
+              <div align="center">
+                <div class="card kanbanCard">
+                  <div class="card-body">
+                    <div class="row justify-content-around">
+                      <div class="col-md-4" align="center">
+                        <a
+                          target="_blank"
+                          v-bind:href="
+                            `https://github.com/${githubSlug}/issues/${
+                              story.issue_number
+                            }`
+                          "
+                        >
+                          #{{ story.issue_number }}
+                        </a>
+                      </div>
+                      <div
+                        class="col-md-8 float-left text-truncate bold"
+                        align="end"
+                      >
+                        {{ story.name }}
+                      </div>
                     </div>
-                    <div class="col-md-8 float-left text-truncate bold" align="end">{{story.name}}</div>
-                  </div>
-                  <div class="row">
-                    <div class="col">
-                      <p align="center" class="story-description text-muted">{{story.description}}</p>
+                    <div class="row">
+                      <div class="col">
+                        <p align="center" class="story-description text-muted">
+                          {{ story.description }}
+                        </p>
+                      </div>
                     </div>
-                  </div>
-                  <div class="row">
-                    <div class="col-md-4" align="start">
-                      <span class="badge badge-primary">
-                        <score-points @update="refreshDoing" 
-                                      :story-id="story.id" 
-                                      :story-points="story.story_points"></score-points>
-                      </span>
-                    </div>
-                    <div class="col-md-8" id="assignees" align="end">
-                      <assignees :issue-number="story.issue_number"></assignees>
+                    <div class="row">
+                      <div class="col-md-4" align="start">
+                        <span class="badge badge-primary">
+                          <score-points
+                            @update="refreshDoing"
+                            :story-id="story.id"
+                            :story-points="story.story_points"
+                          ></score-points>
+                        </span>
+                      </div>
+                      <div class="col-md-8" id="assignees" align="end">
+                        <assignees
+                          :issue-number="story.issue_number"
+                        ></assignees>
+                      </div>
                     </div>
                   </div>
                 </div>
+                <br />
               </div>
-              <br>
             </div>
-          </div>
-        </draggable>
-      </div>
-      <div class="col kanban-col">
-        <div class="row" id="title">
-          <h4>Done&nbsp; &nbsp; </h4>
-          <h4 style="color:#86B1B1; font-size:24px;">{{doneStories.length}}</h4>
+          </draggable>
         </div>
-        <draggable v-model="doneStories" v-bind:options="{group:'issues'}" @change="onUpdateDone($event)"  class="dragArea">
-          <!-- <div class="alert alert-warning alert-dismissible fade show" role="alert" v-if="this.closed">
+        <div class="col kanban-col">
+          <div class="row" id="title">
+            <h4>Done&nbsp; &nbsp;</h4>
+            <h4 style="color:#86B1B1; font-size:24px;">
+              {{ doneStories.length }}
+            </h4>
+          </div>
+          <draggable
+            v-model="doneStories"
+            v-bind:options="{ group: 'issues' }"
+            @change="onUpdateDone($event)"
+            class="dragArea"
+          >
+            <!-- <div class="alert alert-warning alert-dismissible fade show" role="alert" v-if="this.closed">
             <button type="button" class="close" data-dismiss="alert" aria-label="Close">
               <span aria-hidden="true">&times;</span>
             </button>
             <strong>Issue Closed!</strong>
           </div> -->
-          <div v-for="story in doneStories">
-            <div align="center">
-              <div class="card kanbanCard">
-                <div class="card-body">
-                  <div class="row justify-content-around">
-                    <div class="col-md-4" align="center">
-                      <a target="_blank" v-bind:href="`https://github.com/${githubSlug}/issues/${story.issue_number}`">
-                        #{{story.issue_number}}
-                      </a>
+            <div v-for="story in doneStories">
+              <div align="center">
+                <div class="card kanbanCard">
+                  <div class="card-body">
+                    <div class="row justify-content-around">
+                      <div class="col-md-4" align="center">
+                        <a
+                          target="_blank"
+                          v-bind:href="
+                            `https://github.com/${githubSlug}/issues/${
+                              story.issue_number
+                            }`
+                          "
+                        >
+                          #{{ story.issue_number }}
+                        </a>
+                      </div>
+                      <div
+                        class="col-md-8 float-left text-truncate bold"
+                        align="end"
+                      >
+                        {{ story.name }}
+                      </div>
                     </div>
-                    <div class="col-md-8 float-left text-truncate bold" align="end">{{story.name}}</div>
-                  </div>
-                  <div class="row">
-                    <div class="col">
-                      <p align="center" class="story-description text-muted">{{story.description}}</p>
+                    <div class="row">
+                      <div class="col">
+                        <p align="center" class="story-description text-muted">
+                          {{ story.description }}
+                        </p>
+                      </div>
                     </div>
-                  </div>
-                  <div class="row">
-                    <div class="col-md-4" align="start">
-                      <span class="badge badge-primary">
-                        <score-points 
-                            @update="refreshDone" 
-                            :story-id="story.id" 
-                            :story-points="story.story_points"></score-points>
-                      </span>
-                    </div>
-                    <div class="col-md-8" id="assignees" align="end">
-                      <assignees :issue-number="story.issue_number"></assignees>
-                      <a class="text-align" id="closed">Closed</a>
+                    <div class="row">
+                      <div class="col-md-4" align="start">
+                        <span class="badge badge-primary">
+                          <score-points
+                            @update="refreshDone"
+                            :story-id="story.id"
+                            :story-points="story.story_points"
+                          ></score-points>
+                        </span>
+                      </div>
+                      <div class="col-md-8" id="assignees" align="end">
+                        <assignees
+                          :issue-number="story.issue_number"
+                        ></assignees>
+                        <a class="text-align" id="closed">Closed</a>
+                      </div>
                     </div>
                   </div>
                 </div>
+                <br />
               </div>
-              <br>
             </div>
-          </div>
-        </draggable>
+          </draggable>
+        </div>
       </div>
-    </div>
-  </table>
+    </table>
   </div>
-
 </template>
 
 <script>
-import ScorePoints from '@/components/Stories/ScorePoints';
-import AssignMember  from '@/components/Stories/AssignMember';
-import draggable from 'vuedraggable';
-import { HTTP } from '../../http-common';
-import { mapState } from 'vuex';
+import ScorePoints from "@/components/Stories/ScorePoints";
+import AssignMember from "@/components/Stories/AssignMember";
+import draggable from "vuedraggable";
+import { HTTP } from "../../http-common";
+import { mapState } from "vuex";
 
 export default {
   components: {
     draggable,
-    'score-points': ScorePoints,
-    'assignees': AssignMember,
+    "score-points": ScorePoints,
+    assignees: AssignMember
   },
   data() {
     return {
@@ -202,153 +289,164 @@ export default {
       doneStories: [],
       projects: [],
       issue_number: "",
-      closed: false,
-    }
+      closed: false
+    };
   },
   computed: {
     ...mapState({
       token: state => state.auth.token,
       projectId: state => state.clientStatus.projectId,
       githubSlug: state => state.clientStatus.githubSlug,
-      userId: state => state.auth.userId,
-    }),
+      userId: state => state.auth.userId
+    })
   },
   methods: {
-
     onUpdateBacklog(evt) {
-      if(evt.added){
+      if (evt.added) {
         const storyId = evt.added.element.id;
         this.deleteStory(storyId).then(() => this.refreshIssues());
       }
     },
 
-
     onUpdateToDo(evt) {
-      if(evt.added){
-        if(this.isStory(evt)) {
+      if (evt.added) {
+        if (this.isStory(evt)) {
           const storyId = evt.added.element.id;
-          this.updateStoryPipeline(storyId, 'To Do').then(() => this.refreshToDo());
+          this.updateStoryPipeline(storyId, "To Do").then(() =>
+            this.refreshToDo()
+          );
         } else {
-          const newStory = this.createStoryObject(evt, 'To Do');
+          const newStory = this.createStoryObject(evt, "To Do");
           this.createStory(newStory).then(() => this.refreshToDo());
         }
       }
     },
 
     onUpdateDoing(evt) {
-      if(evt.added){
-        if(this.isStory(evt)) {
+      if (evt.added) {
+        if (this.isStory(evt)) {
           const storyId = evt.added.element.id;
-          this.updateStoryPipeline(storyId, 'Doing').then(() => this.refreshDoing());
+          this.updateStoryPipeline(storyId, "Doing").then(() =>
+            this.refreshDoing()
+          );
         } else {
-          const newStory = this.createStoryObject(evt, 'Doing');
+          const newStory = this.createStoryObject(evt, "Doing");
           this.createStory(newStory).then(() => this.refreshDoing());
         }
       }
     },
 
-
-
     onUpdateDone(evt) {
-      if(evt.added) {
-        if(this.isStory(evt)) {
+      if (evt.added) {
+        if (this.isStory(evt)) {
           const storyId = evt.added.element.id;
-          this.updateStoryPipeline(storyId, 'Done').then(() => this.refreshDone());
+          this.updateStoryPipeline(storyId, "Done").then(() =>
+            this.refreshDone()
+          );
         } else {
-          const newStory = this.createStoryObject(evt, 'Done');
+          const newStory = this.createStoryObject(evt, "Done");
           this.createStory(newStory).then(() => this.refreshDone());
         }
-        const issueNumber = evt.added.element.id ? evt.added.element.issue_number : evt.added.element.number;
+        const issueNumber = evt.added.element.id
+          ? evt.added.element.issue_number
+          : evt.added.element.number;
         this.closeIssue(issueNumber);
-      } else{
+      } else {
         const issueNumber = evt.removed.element.issue_number;
         this.reopenIssue(issueNumber);
       }
     },
 
     updateStoryPipeline(storyId, pipeline) {
-
       const headers = { Authorization: this.token };
 
-      return HTTP.patch(`/stories/${storyId}`, { pipeline: pipeline }, { headers })
-        .then((response) => console.log(response.code))
+      return HTTP.patch(
+        `/stories/${storyId}`,
+        { pipeline: pipeline },
+        { headers }
+      ).then(response => console.log(response.code));
     },
 
-    createStoryObject(evt,pipeline) {
+    createStoryObject(evt, pipeline) {
       const story = {
-            name: evt.added.element.name,
-            description: evt.added.element.body,
-            issue_number:evt.added.element.number,
-            issue_id:evt.added.element.issue_id,
-            story_points: "0",
-            pipeline:pipeline,
-            initial_date:new Date().toString(),
-      }  
+        name: evt.added.element.name,
+        description: evt.added.element.body,
+        issue_number: evt.added.element.number,
+        issue_id: evt.added.element.issue_id,
+        story_points: "0",
+        pipeline: pipeline,
+        initial_date: new Date().toString()
+      };
 
       return story;
     },
 
     createStory(story) {
-      const headers = { Authorization: this.token }
+      const headers = { Authorization: this.token };
 
-      return HTTP.post(`sprints/${this.$route.params.id}/stories`, story, { headers })
-        .then((response) => console.log(response.code));
+      return HTTP.post(`sprints/${this.$route.params.id}/stories`, story, {
+        headers
+      }).then(response => console.log(response.code));
     },
 
     deleteStory(storyId) {
-      const headers = { Authorization: this.token }
+      const headers = { Authorization: this.token };
 
-      return HTTP.delete(`stories/${storyId}`, { headers })
-        .then((response) => console.log(response.code));
+      return HTTP.delete(`stories/${storyId}`, { headers }).then(response =>
+        console.log(response.code)
+      );
     },
 
     reopenIssue(issueNumber) {
-        const headers = { Authorization: this.token };
+      const headers = { Authorization: this.token };
 
-        HTTP.post(`/projects/${this.projectId}/reopen_issue`, { issue: { number: issueNumber } }, { headers })
+      HTTP.post(
+        `/projects/${this.projectId}/reopen_issue`,
+        { issue: { number: issueNumber } },
+        { headers }
+      )
         .then(() => {
           this.closed = false;
         })
-        .catch((e) => {
+        .catch(e => {
           this.errors.push(e);
         });
     },
 
     closeIssue(issueNumber) {
-        const headers = { Authorization: this.token };
+      const headers = { Authorization: this.token };
 
-        const config = { data: { issue: { number: issueNumber } }, headers};
+      const config = { data: { issue: { number: issueNumber } }, headers };
 
-        HTTP.delete(`/projects/${this.projectId}/issues`, config)
-          .then(() => {
-            this.closed = true;
-          })
-          .catch((e) => {
-            this.errors.push(e);
-          });
+      HTTP.delete(`/projects/${this.projectId}/issues`, config)
+        .then(() => {
+          this.closed = true;
+        })
+        .catch(e => {
+          this.errors.push(e);
+        });
     },
-
 
     getProjects() {
       const headers = { Authorization: this.token };
 
       HTTP.get(`users/${this.userId}/projects`, { headers })
-      .then((response) => {
-        this.projects = response.data;
-      })
-      .catch((e) => {
-        this.errors.push(e);
-      });
+        .then(response => {
+          this.projects = response.data;
+        })
+        .catch(e => {
+          this.errors.push(e);
+        });
     },
 
     getIssues() {
       const headers = { Authorization: this.token };
 
       HTTP.get(`projects/${this.projectId}/issues`, { headers })
-        .then((response) => {
+        .then(response => {
           this.issues = response.data.issues_infos;
         })
-        .catch((e) => {
+        .catch(e => {
           this.errors.push(e);
         });
     },
@@ -357,10 +455,10 @@ export default {
       const headers = { Authorization: this.token };
 
       HTTP.get(`sprints/${this.$route.params.id}/to_do_stories`, { headers })
-        .then((response) => {
+        .then(response => {
           this.stories = response.data.stories_infos;
         })
-        .catch((e) => {
+        .catch(e => {
           this.errors.push(e);
         });
     },
@@ -368,28 +466,27 @@ export default {
       const headers = { Authorization: this.token };
 
       HTTP.get(`sprints/${this.$route.params.id}/doing_stories`, { headers })
-        .then((response) => {
+        .then(response => {
           this.doingStories = response.data.stories_infos;
         })
-        .catch((e) => {
+        .catch(e => {
           this.errors.push(e);
         });
     },
-
 
     getDone() {
       const headers = { Authorization: this.token };
 
       HTTP.get(`sprints/${this.$route.params.id}/done_stories`, { headers })
-        .then((response) => {
+        .then(response => {
           this.doneStories = response.data.stories_infos;
         })
-        .catch((e) => {
+        .catch(e => {
           this.errors.push(e);
         });
     },
 
-    isStory(evt) { 
+    isStory(evt) {
       return evt.added.element.id;
     },
 
@@ -408,8 +505,6 @@ export default {
     refreshIssues() {
       this.getIssues();
     }
-
-
   },
   mounted() {
     this.getIssues();
@@ -418,8 +513,7 @@ export default {
     this.getDone();
     this.getProjects();
   }
-}
-
+};
 </script>
 
 <style scoped>
@@ -443,13 +537,13 @@ a {
 .dragArea {
   min-height: 280px;
   width: 270px;
-  margin-left:auto;
-  margin-right:auto;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 #rowKanban {
-  margin-left:auto;
-  margin-right:auto;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 #kanbanSpace {
@@ -457,27 +551,27 @@ a {
 }
 
 .kanbanCard {
-  box-shadow: 0 2px 4px 0 rgba(0,0,0,0.2);
+  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2);
   transition: 0.2s;
   max-width: 280px;
 }
 
 .kanbanCard:hover {
-  border-color: #7799A5;
-  box-shadow: 0 4px 12px 0 rgba(0,0,0,0.2);
+  border-color: #7799a5;
+  box-shadow: 0 4px 12px 0 rgba(0, 0, 0, 0.2);
   cursor: pointer;
 }
 
 #doneCard {
-  box-shadow: 0 2px 4px 0 rgba(0,0,0,0.2);
+  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2);
   width: 280px;
   transition: 0.2s;
 }
 
 #title {
   justify-content: center;
-  margin-left:auto;
-  margin-right:auto;
+  margin-left: auto;
+  margin-right: auto;
   margin-bottom: 12px;
 }
 
@@ -486,7 +580,7 @@ a {
   top: 15px;
   right: 10px;
   z-index: 1;
-  color: #688E9B;
+  color: #688e9b;
   width: 25px;
   height: 25px;
   padding: 12.5px 0;
@@ -496,9 +590,9 @@ a {
   border-style: solid;
   border-width: 1.3px;
   border-color: #2f5cb6;
-  color: #FFFFFF;
+  color: #ffffff;
   font-style: oblique;
-  text-align: center
+  text-align: center;
 }
 
 .date .day {
@@ -511,7 +605,7 @@ a {
 }
 
 .kanban-col {
-  box-shadow: 5px 0 0 0 rgba(0,0,0,0.1);
+  box-shadow: 5px 0 0 0 rgba(0, 0, 0, 0.1);
   text-align: center;
   justify-content: center;
   width: 1000px;
@@ -520,13 +614,12 @@ a {
 *,
 *:before,
 *:after {
-    -webkit-box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
 }
 
 #closed {
-  color: #AA0000;
+  color: #aa0000;
 }
-
 </style>
