@@ -50,18 +50,12 @@
 import { mapState } from 'vuex';
 import { HTTP } from '../../http-common';
 import { EventBus } from '../../event-bus';
+import { releaseMixin } from '../../mixins/releaseMixin';
 
 export default {
   props: ['release'],
-
-  data() {
-    return {
-      name: '',
-      description: '',
-      initialDate: '',
-      finalDate: '',
-    };
-  },
+  mixins: [releaseMixin],
+  
   computed: {
     ...mapState({
       token: state => state.auth.token,

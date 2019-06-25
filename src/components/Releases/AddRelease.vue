@@ -59,14 +59,14 @@
 import { mapState } from 'vuex';
 import { EventBus } from '../../event-bus';
 import { HTTP } from '../../http-common';
+import { releaseMixin } from '../../mixins/releaseMixin';
+
 
 export default {
+  mixins: [releaseMixin],
+
   data() {
     return {
-      name: '',
-      description: '',
-      initialDate: '',
-      finalDate: '',
       amount_of_sprints: 0,
     };
   },
